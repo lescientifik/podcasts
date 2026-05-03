@@ -13,6 +13,16 @@
     <itunes:explicit>false</itunes:explicit>
     <atom:link href="https://lescientifik.github.io/podcasts/feed.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Closed-loop d'évaluation et d'optimisation pour un agent PydanticAI</title>
+      <description>Construire une closed-loop d'évaluation et d'optimisation pour un agent PydanticAI, orchestrée par Claude Code, avec Pydantic Evals et OpenTelemetry, en transposant les leçons d'AutoResearch de Karpathy.</description>
+      <pubDate>Sun, 03 May 2026 08:16:14 +0000</pubDate>
+      <guid isPermaLink="false">ep002</guid>
+      <enclosure url="https://lescientifik.github.io/podcasts/episodes/ep002.mp3" type="audio/mpeg" length="16415631" />
+      <itunes:duration>00:42:23</itunes:duration>
+      <itunes:image href="https://lescientifik.github.io/podcasts/episodes/ep002.png" />
+      <itunes:explicit>false</itunes:explicit>
+    </item>
+    <item>
       <title>LLM-as-judge — bonnes pratiques, biais et validation</title>
       <description>Rapport de recherche approfondi sur les bonnes pratiques, biais documentés et techniques de validation pour implémenter un évaluateur LLM-as-judge fiable, avec application au tri d'abstracts médicaux.</description>
       <pubDate>Sun, 03 May 2026 07:43:21 +0000</pubDate>
