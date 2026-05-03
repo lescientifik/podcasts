@@ -1,0 +1,21 @@
+# Secrets — JAMAIS commités
+.claude/skills/podcast-generator/.env
+
+# Per-run cache (intermédiaires de génération, regénérables)
+.podcast/
+
+# Python virtualenvs (regénérables depuis uv.lock)
+.venv/
+.claude/skills/podcast-generator/.venv/
+
+# Python caches
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# OS
+.DS_Store
+Thumbs.db
