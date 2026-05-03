@@ -13,6 +13,16 @@
     <itunes:explicit>false</itunes:explicit>
     <atom:link href="https://lescientifik.github.io/podcasts/feed.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Tentes de toit pour Dacia Jogger en famille — guide complet</title>
+      <description>Guide complet pour choisir une tente de toit avec un Dacia Jogger essence GPL en famille de 4 — types, critères techniques, compatibilité véhicule, et recommandations par budget pour un adulte d'1m86 et deux enfants.</description>
+      <pubDate>Sun, 03 May 2026 15:03:58 +0000</pubDate>
+      <guid isPermaLink="false">ep003</guid>
+      <enclosure url="https://lescientifik.github.io/podcasts/episodes/ep003.mp3" type="audio/mpeg" length="19349065" />
+      <itunes:duration>00:49:56</itunes:duration>
+      <itunes:image href="https://lescientifik.github.io/podcasts/episodes/ep003.png" />
+      <itunes:explicit>false</itunes:explicit>
+    </item>
+    <item>
       <title>Closed-loop d'évaluation et d'optimisation pour un agent PydanticAI</title>
       <description>Construire une closed-loop d'évaluation et d'optimisation pour un agent PydanticAI, orchestrée par Claude Code, avec Pydantic Evals et OpenTelemetry, en transposant les leçons d'AutoResearch de Karpathy.</description>
       <pubDate>Sun, 03 May 2026 08:16:14 +0000</pubDate>
