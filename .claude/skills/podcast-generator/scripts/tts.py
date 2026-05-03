@@ -51,6 +51,7 @@ OPENAI_INSTRUCTIONS: str = (
 )
 
 HEADING_RE: re.Pattern[str] = re.compile(r"^#{1,6}\s")
+FRONTMATTER_RE: re.Pattern[str] = re.compile(r"\A---\s*\n.*?\n---\s*(?:\n|\Z)", re.DOTALL)
 
 
 @dataclass(frozen=True)
@@ -114,8 +115,17 @@ def _word_count(text: str) -> int:
     return len(text.split())
 
 
+def _strip_frontmatter(text: str) -> str:
+    """Retire le bloc YAML frontmatter en tête (--- ... ---), s'il existe.
+
+    Sans cela, le contenu YAML serait lu à voix haute par le TTS.
+    """
+    return FRONTMATTER_RE.sub("", text, count=1)
+
+
 def _extract_paragraphs(text: str) -> list[str]:
     """Découpe sur \\n\\n, ignore les blocs vides et les lignes de titres résiduels."""
+    text = _strip_frontmatter(text)
     paragraphs: list[str] = []
     for block in re.split(r"\n\s*\n", text.strip()):
         kept_lines = [
