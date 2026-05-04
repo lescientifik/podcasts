@@ -13,6 +13,16 @@
     <itunes:explicit>false</itunes:explicit>
     <atom:link href="https://lescientifik.github.io/podcasts/feed.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Les loutres</title>
+      <description>Voyage à la rencontre des loutres pour les enfants — la loutre de mer qui casse des oursins avec une pierre, celles qui se tiennent la main pour dormir, et le retour de la loutre d'Europe dans nos rivières.</description>
+      <pubDate>Mon, 04 May 2026 17:24:58 +0000</pubDate>
+      <guid isPermaLink="false">ep006</guid>
+      <enclosure url="https://lescientifik.github.io/podcasts/episodes/ep006.mp3" type="audio/mpeg" length="14552443" />
+      <itunes:duration>00:38:46</itunes:duration>
+      <itunes:image href="https://lescientifik.github.io/podcasts/episodes/ep006.jpg" />
+      <itunes:explicit>false</itunes:explicit>
+    </item>
+    <item>
       <title>Les drones — les robots du ciel</title>
       <description>Tout savoir sur les drones pour les enfants — comment ces robots du ciel volent grâce à 4 hélices, leurs capteurs et leur GPS, et tout ce qu'ils savent faire (spectacles, sauvetage, science, courses, exploration sous-marine).</description>
       <pubDate>Mon, 04 May 2026 16:15:28 +0000</pubDate>
