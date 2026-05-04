@@ -32,6 +32,8 @@ import numpy as np
 from dotenv import load_dotenv
 from openai import OpenAI
 
+from _cost import get_total_usage, write_cost
+
 # Chunking — guide: cible 300-400 mots, max 450, paragraphe insécable.
 TARGET_MAX_WORDS: int = 400
 HARD_MAX_WORDS: int = 450
@@ -320,6 +322,12 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "--chunks-dir", type=Path, default=None,
         help="Dossier des chunks (défaut: <output_parent>/chunks/).",
     )
+    parser.add_argument(
+        "--cost-output", type=Path, default=None,
+        help="Si fourni, écrit en JSON le delta de `total_usage` OpenRouter "
+             "consommé par ce run (avant/après). Télémétrie best-effort : un échec "
+             "réseau écrit `usd_used: null` au lieu de planter.",
+    )
     return parser.parse_args(argv)
 
 
@@ -365,36 +373,43 @@ def main(argv: list[str] | None = None) -> int:
     client = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=api_key)
     chunk_paths: list[Path] = []
 
-    for chunk in chunks:
-        chunk_path = chunks_dir / f"chunk_{chunk.index:03d}.mp3"
-        if chunk_path.exists() and not is_truncated(chunk_path):
-            print(
-                f"[{chunk.index + 1}/{len(chunks)}] reuse {chunk_path.name} "
-                f"({chunk.word_count} mots)"
-            )
+    usage_before = get_total_usage(api_key) if args.cost_output else None
+    try:
+        for chunk in chunks:
+            chunk_path = chunks_dir / f"chunk_{chunk.index:03d}.mp3"
+            if chunk_path.exists() and not is_truncated(chunk_path):
+                print(
+                    f"[{chunk.index + 1}/{len(chunks)}] reuse {chunk_path.name} "
+                    f"({chunk.word_count} mots)"
+                )
+                chunk_paths.append(chunk_path)
+                continue
+
+            for attempt in range(1, MAX_RETRIES + 1):
+                print(
+                    f"[{chunk.index + 1}/{len(chunks)}] synth {chunk.word_count} mots "
+                    f"({attempt}/{MAX_RETRIES})...",
+                    flush=True,
+                )
+                synthesize_chunk(client, chunk, profile, chunk_path)
+                if not is_truncated(chunk_path):
+                    print(f"        OK -> {chunk_path.name}")
+                    break
+                print("        WARN: troncature détectée, retry.")
+            else:
+                raise TtsTruncationError(chunk.index, profile.name)
+
             chunk_paths.append(chunk_path)
-            continue
 
-        for attempt in range(1, MAX_RETRIES + 1):
-            print(
-                f"[{chunk.index + 1}/{len(chunks)}] synth {chunk.word_count} mots "
-                f"({attempt}/{MAX_RETRIES})...",
-                flush=True,
-            )
-            synthesize_chunk(client, chunk, profile, chunk_path)
-            if not is_truncated(chunk_path):
-                print(f"        OK -> {chunk_path.name}")
-                break
-            print("        WARN: troncature détectée, retry.")
-        else:
-            raise TtsTruncationError(chunk.index, profile.name)
+        print(f"\nConcaténation -> {args.output}")
+        concat_mp3(chunk_paths, args.output)
+        size_mb = args.output.stat().st_size / 1024 / 1024
+        print(f"OK ({size_mb:.1f} MB)")
+    finally:
+        if args.cost_output is not None:
+            usage_after = get_total_usage(api_key)
+            write_cost(args.cost_output, "tts", usage_before, usage_after)
 
-        chunk_paths.append(chunk_path)
-
-    print(f"\nConcaténation -> {args.output}")
-    concat_mp3(chunk_paths, args.output)
-    size_mb = args.output.stat().st_size / 1024 / 1024
-    print(f"OK ({size_mb:.1f} MB)")
     return 0
 
 

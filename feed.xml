@@ -13,6 +13,16 @@
     <itunes:explicit>false</itunes:explicit>
     <atom:link href="https://lescientifik.github.io/podcasts/feed.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Les drones — les robots du ciel</title>
+      <description>Tout savoir sur les drones pour les enfants — comment ces robots du ciel volent grâce à 4 hélices, leurs capteurs et leur GPS, et tout ce qu'ils savent faire (spectacles, sauvetage, science, courses, exploration sous-marine).</description>
+      <pubDate>Mon, 04 May 2026 16:15:28 +0000</pubDate>
+      <guid isPermaLink="false">ep005</guid>
+      <enclosure url="https://lescientifik.github.io/podcasts/episodes/ep005.mp3" type="audio/mpeg" length="13378200" />
+      <itunes:duration>00:35:34</itunes:duration>
+      <itunes:image href="https://lescientifik.github.io/podcasts/episodes/ep005.png" />
+      <itunes:explicit>false</itunes:explicit>
+    </item>
+    <item>
       <title>Les robots cachés autour de toi</title>
       <description>Un voyage dans la maison, la rue et la voiture pour découvrir tous les robots qu'on croise sans les voir — capteurs, cerveaux et muscles mécaniques expliqués aux enfants curieux.</description>
       <pubDate>Mon, 04 May 2026 07:14:58 +0000</pubDate>

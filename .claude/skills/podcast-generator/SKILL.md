@@ -173,10 +173,15 @@ Skip whichever output already exists. Verify both files exist after.
 
 Skip if `$OUT_DIR/podcast.mp3` already exists.
 
+`--cost-output` writes a small JSON snapshotting OpenRouter's
+`total_usage` before/after the run so the orchestrator can report
+the exact USD billed at the end (cf Step 5b).
+
 ```bash
 uv run --project "$SKILL_DIR" "$SKILL_DIR/scripts/tts.py" \
   --input "$OUT_DIR/podcast-script.md" \
-  --output "$OUT_DIR/podcast.mp3"
+  --output "$OUT_DIR/podcast.mp3" \
+  --cost-output "$OUT_DIR/cost_tts.json"
 ```
 
 If the run fails with a Voxtral-specific error (rate limit, server
@@ -186,7 +191,8 @@ error), retry once with the OpenAI backup voice:
 uv run --project "$SKILL_DIR" "$SKILL_DIR/scripts/tts.py" \
   --input "$OUT_DIR/podcast-script.md" \
   --output "$OUT_DIR/podcast.mp3" \
-  --voice openai_shimmer_125x
+  --voice openai_shimmer_125x \
+  --cost-output "$OUT_DIR/cost_tts.json"
 ```
 
 ## Step 4 — Cover Image (square 1:1)
@@ -201,7 +207,8 @@ on image-gen failure.
 ```bash
 uv run --project "$SKILL_DIR" "$SKILL_DIR/scripts/generate_cover.py" \
   --image-prompt "$OUT_DIR/image-prompt.txt" \
-  --output "$OUT_DIR/cover.png"
+  --output "$OUT_DIR/cover.png" \
+  --cost-output "$OUT_DIR/cost_cover.json"
 ```
 
 ## Step 5 — Publish to GitHub Pages
@@ -245,7 +252,36 @@ search them on GitHub.)
 The script prints the assigned episode number on its last stdout line
 (e.g. `ep002`). `tee` persists it for resume.
 
-### 5b — Commit & push
+### 5b — Cost report (just before push)
+
+Avant de pousser sur GitHub, lire les deux JSON `cost_*.json` produits
+par les Steps 3 et 4, sommer `usd_used`, et afficher le coût OpenRouter
+de cet épisode au user. C'est la seule occasion d'afficher le coût
+avant un commit irréversible.
+
+```bash
+python3 -c "
+import json, pathlib, sys
+out = pathlib.Path('$OUT_DIR')
+parts = []
+total = 0.0
+for step, fname in [('TTS', 'cost_tts.json'), ('Cover', 'cost_cover.json')]:
+    p = out / fname
+    if not p.exists():
+        parts.append(f'{step}: ?'); continue
+    d = json.loads(p.read_text())
+    usd = d.get('usd_used')
+    if usd is None:
+        parts.append(f'{step}: n/a (télémétrie indisponible)')
+    else:
+        parts.append(f'{step}: \${usd:.4f}'); total += usd
+print('Coût OpenRouter de cet épisode :', ' + '.join(parts), f'= \${total:.4f}')
+"
+```
+
+Inclure ce coût dans le récap final (Step 6).
+
+### 5c — Commit & push
 
 ```bash
 bash "$REPO_ROOT/scripts/publish.sh" "$(cat "$OUT_DIR/ep_number.txt")" "$topic"
@@ -273,6 +309,11 @@ Read the episode number from `$OUT_DIR/ep_number.txt`, then present:
 - final word count of `podcast-script.md`
 - final MP3 duration (`ffprobe -i "$OUT_DIR/podcast.mp3" -show_entries format=duration -v quiet -of csv="p=0"`)
 - whether the cover was AI-generated or fell back to the generic asset
+- **OpenRouter cost** of this episode: somme `usd_used` de
+  `cost_tts.json` + `cost_cover.json` (déjà calculée à la Step 5b).
+  Format : `Coût OpenRouter : $0.XXXX (TTS $X + Cover $Y)`. Si l'un
+  des fichiers manque ou contient `usd_used: null`, l'indiquer
+  honnêtement (`télémétrie indisponible`) plutôt qu'inventer.
 - the episode URL: `https://lescientifik.github.io/podcasts/#<ep_number>`
 - the RSS feed URL: `https://lescientifik.github.io/podcasts/feed.xml`
   (rappeler au user qu'il peut le coller dans AntennaPod / Pocket Casts)

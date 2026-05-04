@@ -31,6 +31,8 @@ from typing import Any
 from dotenv import load_dotenv
 from openai import OpenAI, OpenAIError
 
+from _cost import get_total_usage, write_cost
+
 IMAGE_MODEL: str = "google/gemini-3.1-flash-image-preview"
 IMAGE_ASPECT_RATIO: str = "1:1"
 
@@ -165,6 +167,14 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         default=GENERIC_FALLBACK,
         help=f"Image fallback en cas d'échec image gen (défaut: {GENERIC_FALLBACK}).",
     )
+    parser.add_argument(
+        "--cost-output",
+        type=Path,
+        default=None,
+        help="Si fourni, écrit en JSON le delta de `total_usage` OpenRouter "
+             "consommé par ce run (avant/après). Télémétrie best-effort : "
+             "un échec réseau écrit `usd_used: null` au lieu de planter.",
+    )
     return parser.parse_args(argv)
 
 
@@ -198,11 +208,23 @@ def main(argv: list[str] | None = None) -> int:
     """Génère la cover. Retourne un exit code int."""
     args = _parse_args(argv)
 
+    usage_before: float | None = None
+    api_key: str | None = None
+    if args.cost_output is not None:
+        load_dotenv()
+        api_key = os.environ.get("OPENROUTER_API_KEY", "").strip() or None
+        if api_key is not None:
+            usage_before = get_total_usage(api_key)
+
     try:
         cover = _resolve_cover(args, _make_openai_client)
     except (FileNotFoundError, ValueError, RuntimeError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
+    finally:
+        if args.cost_output is not None:
+            usage_after = get_total_usage(api_key) if api_key else None
+            write_cost(args.cost_output, "cover", usage_before, usage_after)
 
     print(f"Cover   : {cover.path}" + (" (FALLBACK)" if cover.used_fallback else ""))
     return 0
