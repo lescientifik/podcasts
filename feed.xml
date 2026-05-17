@@ -13,6 +13,16 @@
     <itunes:explicit>false</itunes:explicit>
     <atom:link href="https://lescientifik.github.io/podcasts/feed.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Le chat — la petite bête aux super-pouvoirs</title>
+      <description>Voyage au cœur du chat pour les enfants — ses yeux qui voient dans le noir, ses moustaches magiques, ses oreilles à trente-deux muscles, son secret pour toujours retomber sur ses pattes, et l'histoire de Félicette, la première chatte de l'espace.</description>
+      <pubDate>Sun, 17 May 2026 15:32:22 +0000</pubDate>
+      <guid isPermaLink="false">ep007</guid>
+      <enclosure url="https://lescientifik.github.io/podcasts/episodes/ep007.mp3" type="audio/mpeg" length="16726319" />
+      <itunes:duration>00:44:01</itunes:duration>
+      <itunes:image href="https://lescientifik.github.io/podcasts/episodes/ep007.png" />
+      <itunes:explicit>false</itunes:explicit>
+    </item>
+    <item>
       <title>Les loutres</title>
       <description>Voyage à la rencontre des loutres pour les enfants — la loutre de mer qui casse des oursins avec une pierre, celles qui se tiennent la main pour dormir, et le retour de la loutre d'Europe dans nos rivières.</description>
       <pubDate>Mon, 04 May 2026 17:24:58 +0000</pubDate>
